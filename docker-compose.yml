@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+    http-service: # 服務名稱
+        container_name: "http-service" # 在 docker 裡面的名字，沒有命名的話，會被 docker 自動取名
+        build:
+            context: .
+        restart: always
+        ports:
+            - "8080:80"
+        volumes:
+            - .:/app # 掛載，左邊為本機，右邊為 container 內部
+        working_dir: /app/service
+        deploy:
+            mode: replicated
+            replicas: 1
+        # tty: true # 可以讓 container 一直在運行
+        privileged: true # 讓 root 擁有最高權限
+        command: sh entrypoint.sh # 這是為了要讓程式 hang 住
+
+    redis-service:
+        image: redis:6-alpine
+        container_name: redis-service
+        ports:
+            - "6379:6379"
